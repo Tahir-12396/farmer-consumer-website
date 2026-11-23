@@ -92,14 +92,10 @@ def create_app(config_class=Config):
 
     return app
 
+# WSGI application instance for production
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
-    with app.app_context():
-        try:
-            db.create_all()
-            print("Database tables verified.")
-        except Exception as e:
-            print(f"Database init warning: {e}")
     port = int(os.environ.get('PORT', 5050))
     print(f"KisanDirect Backend running on http://0.0.0.0:{port} (accessible via localhost & Wi-Fi LAN)")
     app.run(host='0.0.0.0', port=port, debug=False)
