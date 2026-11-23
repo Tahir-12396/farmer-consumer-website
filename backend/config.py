@@ -24,6 +24,10 @@ class Config:
     else:
         SQLALCHEMY_DATABASE_URI = DEFAULT_MYSQL_URI
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+    }
     
     # Uploads directory
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
