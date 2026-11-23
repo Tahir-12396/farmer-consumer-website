@@ -16,7 +16,13 @@ class Config:
     MYSQL_DB = os.environ.get('MYSQL_DB', 'kisandirect_db')
     
     DEFAULT_MYSQL_URI = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}?charset=utf8mb4"
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', DEFAULT_MYSQL_URI)
+    raw_db_url = os.environ.get('DATABASE_URL')
+    if raw_db_url:
+        if raw_db_url.startswith("postgres://"):
+            raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+        SQLALCHEMY_DATABASE_URI = raw_db_url
+    else:
+        SQLALCHEMY_DATABASE_URI = DEFAULT_MYSQL_URI
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Uploads directory

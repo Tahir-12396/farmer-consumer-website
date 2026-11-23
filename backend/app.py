@@ -32,6 +32,13 @@ def create_app(config_class=Config):
     # Ensure uploads directory exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+    # Initialize tables on startup
+    with app.app_context():
+        try:
+            db.create_all()
+        except Exception as e:
+            app.logger.warning(f"Database init warning on app startup: {e}")
+
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(categories_bp, url_prefix='/api/categories')
@@ -51,7 +58,15 @@ def create_app(config_class=Config):
     def serve_upload(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-    # Health check
+    # Root & Health check
+    @app.route('/')
+    def root():
+        return jsonify({
+            'status': 'online',
+            'app': 'KisanDirect API',
+            'docs': '/api/health'
+        })
+
     @app.route('/api/health')
     def health():
         return jsonify({
